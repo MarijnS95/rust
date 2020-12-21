@@ -152,6 +152,7 @@ use crate::pin::Pin;
 use crate::{
     convert, fmt, hint, mem,
     ops::{self, Deref, DerefMut},
+    slice,
 };
 
 /// The `Option` type. See [the module level documentation](self) for more.
@@ -633,6 +634,53 @@ impl<T> Option<T> {
     #[stable(feature = "rust1", since = "1.0.0")]
     pub fn iter_mut(&mut self) -> IterMut<'_, T> {
         IterMut { inner: Item { opt: self.as_mut() } }
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+    // Slice constructors
+    /////////////////////////////////////////////////////////////////////////
+
+    /// Returns a [`slice`] over the possibly contained value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let x = Some(4);
+    /// assert_eq!(x.as_slice(), [4]);
+    ///
+    /// let x: Option<u32> = None;
+    /// assert_eq!(x.as_slice(), []);
+    /// ```
+    #[inline]
+    #[unstable(feature = "option_slice", issue = "99999")]
+    pub fn as_slice(&self) -> &[T] {
+        match self {
+            Some(v) => slice::from_ref(v),
+            None => &[],
+        }
+    }
+
+    /// Returns a mutable [`slice`] over the possibly contained value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut x = Some(4);
+    /// for v in x.as_mut_slice() {
+    ///     *v = 42;
+    /// }
+    /// assert_eq!(x, Some(42));
+    ///
+    /// let mut x: Option<u32> = None;
+    /// assert_eq!(x.as_mut_slice(), []);
+    /// ```
+    #[inline]
+    #[unstable(feature = "option_slice", issue = "99999")]
+    pub fn as_mut_slice(&mut self) -> &mut [T] {
+        match self {
+            Some(v) => slice::from_mut(v),
+            None => &mut [],
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////

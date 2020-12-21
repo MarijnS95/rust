@@ -206,6 +206,33 @@ fn test_mut_iter() {
 }
 
 #[test]
+fn test_slice() {
+    let x = Some(5);
+    let s = x.as_slice();
+    assert_eq!(s.len(), 1);
+    assert_eq!(s, [5]);
+
+    let x: Option<u32> = None;
+    let s = x.as_slice();
+    assert!(s.is_empty());
+}
+
+#[test]
+fn test_mut_slice() {
+    let mut x = Some(5);
+    let s = x.as_mut_slice();
+    assert_eq!(s.len(), 1);
+    assert_eq!(s, [5]);
+    s[0] = 6;
+    assert_eq!(s, [6]);
+    assert_eq!(x, Some(6));
+
+    let mut x: Option<u32> = None;
+    let s = x.as_mut_slice();
+    assert!(s.is_empty());
+}
+
+#[test]
 fn test_ord() {
     let small = Some(1.0f64);
     let big = Some(5.0f64);
